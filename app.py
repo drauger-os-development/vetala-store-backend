@@ -89,12 +89,24 @@ def game_front_page():
 
 # Looking at an individual game
 @app.route("/game/<name>")
-def get_game(name):
+def view_game(name):
     db = sql.connect(settings["db_name"])
     data = db.execute("SELECT * FROM games WHERE name='%s'" % (name)).fetchall()
     data = format_data(data)
+    del data[0]["URL"]
+    del data[0]["base64"]
     return json.dumps(data, indent=1)
 
+
+# Download game
+@app.route("/game/<name>/download")
+def download_game(name):
+    db = sql.connect(settings["db_name"])
+    data = db.execute("SELECT * FROM games WHERE name='%s'" % (name))
+    return_data = format_data(data.fetchall())
+    db.execute("UPDATE games SET downloads = %s WHERE base64 = '%s'" % (return_data[0]["downloads"] + 1, return_data[0]["base64"]))
+    db.commit()
+    return return_data[0]["URL"]
 
 # Searching for games
 @app.route("/search/<term>")
@@ -116,5 +128,8 @@ def search(term):
         for game in data:
             if ((text.lower() in game["Name"].lower()) or (text.lower() in game["description"].lower())):
                 return_data.append(game)
+    for each in return_data:
+        del each["URL"]
+        del each["base64"]
     return_data = json.dumps(return_data, indent=1)
     return return_data
