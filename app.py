@@ -53,13 +53,14 @@ tables = db.execute("SELECT name FROM sqlite_master WHERE type='table';").fetcha
 if len(tables) < 1:
     db.execute("""CREATE TABLE games
     (name TEXT, base64 BLOB, downloads INTEGER, genres TEXT, url BLOB,
-    screenshots_url BLOB, description TEXT, rating TEXT, compile_type TEXT)""")
+    screenshots_url BLOB, description TEXT, rating TEXT, compile_type TEXT,
+    add_time INTEGER)""")
     db.execute("""INSERT INTO games VALUES
     ("Minetest", "aHR0cDovL21pcnJvcnMua2VybmVsLm9yZy91YnVudHUvcG9vbC91bml2ZXJzZS9tL21pbmV0ZXN0
 L21pbmV0ZXN0XzUuMS4xK3JlcGFjay0xYnVpbGQxX2FtZDY0LmRlYgo=", 1, "open world,open-source,mining,survival,sandbox",
     "http://mirrors.kernel.org/ubuntu/pool/universe/m/minetest/minetest_5.1.1+repack-1build1_amd64.deb",
     "https://www.minetest.net/#gallery", "Open-source Minecraft Clone that runs natively on Windows, MacOS, Linux, and other OSs",
-    "E", "linux")""")
+    "E", "linux", 1623351659)""")
     db.commit()
 
 def format_data(to_format):
@@ -68,7 +69,8 @@ def format_data(to_format):
         add = {"Name": data[0], "base64": data[1], "downloads": data[2],
                "genres": data[3].split(","), "URL": data[4],
                "screenshots_url": data[5], "description": data[6],
-               "rating": data[7].upper(), "compile_type": data[8].lower()}
+               "rating": data[7].upper(), "compile_type": data[8].lower(),
+               "joined": data[9]}
         return_data.append(copy.deepcopy(add))
     return return_data
 
