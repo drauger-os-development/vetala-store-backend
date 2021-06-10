@@ -54,13 +54,24 @@ if len(tables) < 1:
     db.execute("""CREATE TABLE games
     (name TEXT, base64 BLOB, downloads INTEGER, genres TEXT, url BLOB,
     screenshots_url BLOB, description TEXT, rating TEXT, compile_type TEXT,
-    add_time INTEGER)""")
-    db.execute("""INSERT INTO games VALUES
-    ("Minetest", "aHR0cDovL21pcnJvcnMua2VybmVsLm9yZy91YnVudHUvcG9vbC91bml2ZXJzZS9tL21pbmV0ZXN0
-L21pbmV0ZXN0XzUuMS4xK3JlcGFjay0xYnVpbGQxX2FtZDY0LmRlYgo=", 1, "open world,open-source,mining,survival,sandbox",
-    "http://mirrors.kernel.org/ubuntu/pool/universe/m/minetest/minetest_5.1.1+repack-1build1_amd64.deb",
-    "https://www.minetest.net/#gallery", "Open-source Minecraft Clone that runs natively on Windows, MacOS, Linux, and other OSs",
-    "E", "linux", 1623351659)""")
+    add_time INTEGER, in_pack_man BOOLEAN)""")
+    if os.path.isfile("default_games.json"):
+        with open("default_games.json", "r") as file:
+            default_games = json.load(file)
+        for each in default_games:
+            db.execute("""INSERT INTO games VALUES
+("%s", "%s", %s, "%s", "%s", "%s", "%s",
+"%s", "%s", %s, %s)""" % (default_games[each]["Name"],
+                          default_games[each]["base64"],
+                          default_games[each]["downloads"],
+                          ",".join(default_games[each]["genres"]),
+                          default_games[each]["URL"],
+                          default_games[each]["screenshots_url"],
+                          default_games[each]["description"],
+                          default_games[each]["rating"],
+                          default_games[each]["compile_type"],
+                          default_games[each]["joined"],
+                          default_games[each]["in_pack_man"]))
     db.commit()
 
 def format_data(to_format):

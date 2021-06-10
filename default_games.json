@@ -1,0 +1,40 @@
+{
+  "0": {
+    "Name": "Minetest",
+    "compile_type": "linux",
+    "description": "Open-source Minecraft Clone that runs natively on Windows, MacOS, Linux, and other OSs",
+    "downloads": 1,
+    "genres": [
+      "open world",
+      "open-source",
+      "mining",
+      "survival",
+      "sandbox",
+      "multiplayer"
+    ],
+    "joined": 1623351659,
+    "rating": "E",
+    "screenshots_url": "https://www.minetest.net/#gallery",
+    "URL": "minetest",
+    "in_pack_man": true,
+    "base64": "bWluZXRlc3QK"
+  },
+  "1": {
+    "Name": "Xonotic",
+    "compile_type": "linux",
+    "description": "Xonotic is an addictive, arena-style first person shooter with crisp movement and a wide array of weapons. It combines intuitive mechanics with in-your-face action to elevate your heart rate",
+    "downloads": 1,
+    "genres": [
+      "FPS",
+      "open-source",
+      "multiplayer",
+      "quake"
+    ],
+    "joined": 1623351659,
+    "rating": "T",
+    "screenshots_url": "https://xonotic.org/images/",
+    "URL": "https://dl.xonotic.org/xonotic-0.8.2.zip",
+    "in_pack_man": false,
+    "base64": "aHR0cHM6Ly9kbC54b25vdGljLm9yZy94b25vdGljLTAuOC4yLnppcAo="
+  }
+}
