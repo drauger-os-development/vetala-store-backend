@@ -75,14 +75,16 @@ if len(tables) < 1:
     db.commit()
 
 def format_data(to_format):
-    return_data = []
+    return_data = {}
+    length = 0
     for data in to_format:
         add = {"Name": data[0], "base64": data[1], "downloads": data[2],
                "genres": data[3].split(","), "URL": data[4],
                "screenshots_url": data[5], "description": data[6],
                "rating": data[7].upper(), "compile_type": data[8].lower(),
-               "joined": data[9]}
-        return_data.append(copy.deepcopy(add))
+               "joined": data[9], "in_pack_man": data[10]}
+        return_data[length] = copy.deepcopy(add)
+        length+=1
     return return_data
 
 @app.route("/")
@@ -106,7 +108,8 @@ def view_game(name):
     data = format_data(data)
     del data[0]["URL"]
     del data[0]["base64"]
-    return json.dumps(data, indent=1)
+    del data[0]["in_pack_man"]
+    return data[0]
 
 
 # Download game
@@ -117,7 +120,7 @@ def download_game(name):
     return_data = format_data(data.fetchall())
     db.execute("UPDATE games SET downloads = %s WHERE base64 = '%s'" % (return_data[0]["downloads"] + 1, return_data[0]["base64"]))
     db.commit()
-    return return_data[0]["URL"]
+    return {"URL": return_data[0]["URL"], "in_pack_man": return_data[0]["in_pack_man"]}
 
 # Searching for games
 @app.route("/search/<term>")
@@ -125,22 +128,27 @@ def search(term):
     db = sql.connect(settings["db_name"])
     if term[:4] == "tags":
         tags = term[5:].split(",")
-        return_data = []
+        return_data = {}
+        length = 0
         data = format_data(db.execute("SELECT * FROM games").fetchall())
         for game in data:
             for tag in tags:
-                if ((tag in game["genres"]) or (tag == game["rating"]) or (tag == game["compile_type"])):
-                    return_data.append(game)
+                if ((tag in data[game]["genres"]) or (tag == data[game]["rating"]) or (tag == data[game]["compile_type"])):
+                    return_data[length] = data[game]
+                    length+=1
                     break
     elif term[:9] == "free-text":
         text = term[10:]
-        return_data = []
+        return_data = {}
+        length = 0
         data = format_data(db.execute("SELECT * FROM games").fetchall())
         for game in data:
-            if ((text.lower() in game["Name"].lower()) or (text.lower() in game["description"].lower())):
-                return_data.append(game)
+            if ((text.lower() in data[game]["Name"].lower()) or (text.lower() in data[game]["description"].lower())):
+                return_data[length] = data[game]
+                length+=1
     for each in return_data:
-        del each["URL"]
-        del each["base64"]
-    return_data = json.dumps(return_data, indent=1)
+        del return_data[each]["URL"]
+        del return_data[each]["base64"]
+        del return_data[each]["in_pack_man"]
+    # return_data = json.dumps(return_data, indent=1)
     return return_data
