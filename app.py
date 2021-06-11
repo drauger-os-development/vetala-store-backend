@@ -29,7 +29,8 @@ import os
 import base64
 import copy
 import sqlite3 as sql
-from flask import Flask, request
+from flask import Flask, request, render_template, redirect, url_for
+from flask_login import login_user, login_required, current_user, logout_user
 
 
 def __eprint__(*args, **kwargs):
@@ -46,6 +47,9 @@ if not os.path.isfile("settings.json"):
     sys.exit(1)
 with open("settings.json", "r") as file:
     settings = json.load(file)
+
+with open(settings["secrets_file"], "r") as file:
+    secrets = json.load(file)
 
 # Initialize the DB
 db = sql.connect(settings["db_name"])
@@ -179,3 +183,28 @@ def get_tags():
         if games[each]["compile_type"] not in output["compile_types"]:
             output["compile_types"].append(games[each]["compile_type"])
     return output
+
+
+# Admin UI Section
+@app.route(settings["login_path"])
+def login():
+    return render_template("login.html")
+
+
+@app.route('/login', methods=['POST'])
+def login_post():
+    # login code goes here
+    return redirect(url_for('/interface'))
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for())
+
+@app.route("/interface")
+@login_required
+def interface():
+    # Need to make interface for modifying Database contents
+    pass
