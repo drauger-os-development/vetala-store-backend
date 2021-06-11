@@ -107,5 +107,38 @@
       "joined": 1623351659,
       "screenshots_url": "https://viewizard.com",
       "base64": "YXN0cm9tZW5hY2UK"
+  },
+  "6": {
+      "Name": "Battle_for_Wesnoth",
+      "compile_type": "linux",
+      "description": "The Battle for Wesnoth is a turn-based tactical strategy game with a high fantasy theme. Build up a great army, gradually turning raw recruits into hardened veterans. In later games, recall your toughest warriors and form a deadly host that none can stand against! Choose units from a large pool of specialists, and hand-pick a force with the right strengths to fight well on different terrains against all manner of opposition.",
+      "downloads": 1,
+      "genres": [
+          "turn-based strategy",
+          "TBS",
+          "Strategy"
+      ],
+      "URL": "wesnoth",
+      "in_pack_man": true,
+      "rating": "E",
+      "screenshots_url": "https://www.wesnoth.org/",
+      "joined": 1623351659,
+      "base64": "d2Vzbm90aAo="
+  },
+  "7": {
+      "Name": "SuperTuxKart",
+      "compile_type": "linux",
+      "description": "SuperTuxKart is a free 3D kart racing game. It has been compared to games like Mario Kart from Nintendo, but it has a completely original engine, art and audio.",
+      "downloads": 1,
+      "genres": [
+          "racing",
+          "multiplayer"
+      ],
+      "URL": "supertuxkart",
+      "in_pack_man": true,
+      "rating": "E",
+      "screenshots_url": "https://supertuxkart.net/Discover",
+      "joined": 1623351659,
+      "base64": "c3VwZXJ0dXhrYXJ0Cg=="
   }
 }
