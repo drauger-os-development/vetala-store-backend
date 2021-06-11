@@ -164,3 +164,18 @@ def search(term):
         del return_data[each]["in_pack_man"]
     # return_data = json.dumps(return_data, indent=1)
     return return_data
+
+
+@app.route("/tags")
+def get_tags():
+    games = game_front_page()
+    output = {"genres": [], "ratings": [], "compile_types": []}
+    for each in games:
+        for each1 in games[each]["genres"]:
+            if each1 not in output["genres"]:
+                output["genres"].append(each1)
+        if games[each]["rating"] not in output["ratings"]:
+            output["ratings"].append(games[each]["rating"])
+        if games[each]["compile_type"] not in output["compile_types"]:
+            output["compile_types"].append(games[each]["compile_type"])
+    return output
