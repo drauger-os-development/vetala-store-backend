@@ -36,5 +36,76 @@
     "URL": "https://dl.xonotic.org/xonotic-0.8.2.zip",
     "in_pack_man": false,
     "base64": "aHR0cHM6Ly9kbC54b25vdGljLm9yZy94b25vdGljLTAuOC4yLnppcAo="
+},
+  "2": {
+      "Name": "0_A.D.",
+      "compile_type": "linux",
+      "description": "0 A.D. (pronounced “zero-ey-dee”) is a free, open-source, historical Real Time Strategy (RTS) game currently under development by Wildfire Games, a global group of volunteer game developers. As the leader of an ancient civilization, you must gather the resources you need to raise a military force and dominate your enemies.",
+      "downloads": 1,
+      "genres": [
+          "RTS",
+          "Historical",
+          "Strategy",
+          "open-source"
+      ],
+      "URL": "0ad",
+      "in_pack_man": true,
+      "base64": "MGFkCg==",
+      "rating": null,
+      "joined": 1623351659,
+      "screenshots_url": "https://play0ad.com/media/screenshots/"
+  },
+  "3": {
+      "Name": "Adagate",
+      "compile_type": "linux",
+      "description": "AdaGate is a 3D sokoban puzzle game within a Stargate / Portal fantasy setting. It is an elaborate example of modern OpenGL programming using the Ada language that runs on Windows, OSX, and GNU/Linux.",
+      "downloads": 1,
+      "genres": [
+          "demo",
+          "puzzle",
+          "open-source"
+      ],
+      "URL": "https://sourceforge.net/projects/adagate/files/latest/download",
+      "in_pack_man": false,
+      "rating": null,
+      "joined": 1623351659,
+      "screenshots_url": "https://sourceforge.net/projects/adagate/",
+      "base64": "aHR0cHM6Ly9zb3VyY2Vmb3JnZS5uZXQvcHJvamVjdHMvYWRhZ2F0ZS9maWxlcy9sYXRlc3QvZG93bmxvYWQK"
+  },
+  "4": {
+      "Name": "Freeciv",
+      "compile_type": "linux",
+      "description": "Freeciv is a Free and Open Source empire-building strategy game inspired by the history of human civilization.",
+      "downloads": 1,
+      "genres": [
+          "Strategy",
+          "turn-based strategy",
+          "TBS",
+          "open-source",
+          "multiplayer"
+      ],
+      "URL": "freeciv",
+      "in_pack_man": true,
+      "rating": "E",
+      "joined": 1623351659,
+      "screenshots_url": "https://freeciv.fandom.com/wiki/Screenshots",
+      "base64": "ZnJlZWNpdgo="
+  },
+  "5": {
+      "Name": "AstroMenace",
+      "compile_type": "linux",
+      "description": "AstroMenace stands out for a hardcore gameplay that absorbs you completely as you repel the relentless attacks of diverse adversaries and dodge hails of projectiles. During the game, you will face many cunning opponents, having unique tactics and strategies and trying to give you a rough time in their own peculiar way, so you’ll need all your quick-wits to evade their attacks.",
+      "downloads": 1,
+      "genres": [
+          "Arcade",
+          "Shoot 'em up",
+          "open-source"
+      ],
+      "URL": "astromenace",
+      "in_pack_man": true,
+      "rating": "E10+",
+      "joined": 1623351659,
+      "screenshots_url": "https://viewizard.com",
+      "base64": "YXN0cm9tZW5hY2UK"
   }
 }
