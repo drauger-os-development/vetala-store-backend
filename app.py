@@ -116,6 +116,8 @@ def view_game(name):
     db = sql.connect(settings["db_name"])
     data = db.execute("SELECT * FROM games WHERE name='%s'" % (name)).fetchall()
     data = format_data(data)
+    if data == {}:
+        return {}
     del data[0]["URL"]
     del data[0]["base64"]
     del data[0]["in_pack_man"]
