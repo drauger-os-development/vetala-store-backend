@@ -95,7 +95,7 @@ We strongly advise that you use the official client to interact with this API.
 """ % (settings["store_name"])
 
 
-@app.route("/game")
+@app.route("/games")
 def game_front_page():
     db = sql.connect(settings["db_name"])
     data = db.execute("SELECT * FROM games").fetchall()
@@ -111,7 +111,7 @@ def game_front_page():
 
 
 # Looking at an individual game
-@app.route("/game/<name>")
+@app.route("/games/<name>")
 def view_game(name):
     db = sql.connect(settings["db_name"])
     data = db.execute("SELECT * FROM games WHERE name='%s'" % (name)).fetchall()
@@ -123,7 +123,7 @@ def view_game(name):
 
 
 # Download game
-@app.route("/game/<name>/download")
+@app.route("/games/<name>/download")
 def download_game(name):
     db = sql.connect(settings["db_name"])
     data = db.execute("SELECT * FROM games WHERE name='%s'" % (name))
