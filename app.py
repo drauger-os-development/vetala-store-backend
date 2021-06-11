@@ -97,7 +97,17 @@ We strongly advise that you use the official client to interact with this API.
 
 @app.route("/game")
 def game_front_page():
-    return "This folder contains all games."
+    db = sql.connect(settings["db_name"])
+    data = db.execute("SELECT * FROM games").fetchall()
+    data = format_data(data)
+    if data == {}:
+        return {}
+    for each in data:
+        del data[each]["URL"]
+        del data[each]["base64"]
+        del data[each]["in_pack_man"]
+    return data
+
 
 
 # Looking at an individual game
