@@ -2,58 +2,58 @@
 
 {% block content %}
 <div class="column is-4 is-offset-4">
-    <h3 class="title">Add a New Game</h3>
+    <h3 class="title">Interface</h3>
     <div class="box">
         <form method="POST" action="/interface">
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="text" name="name" placeholder="Game's Name" autofocus="">
+                    <input class="input is-large" type="name" name="name" placeholder="Game's Name" autofocus="">
                 </div>
             </div>
 
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="text" name="platform" placeholder="Target Platform">
+                    <input class="input is-large" type="platform" name="platform" placeholder="Target Platform">
                 </div>
             </div>
-
+            
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="text" name="description" placeholder="Game Description">
+                    <input class="input is-large" type="description" name="description" placeholder="Game Description">
                 </div>
             </div>
-
+            
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="text" name="genres" placeholder="Genres, comma delimited list">
+                    <input class="input is-large" type="genres" name="genres" placeholder="Genres, comma delimited list">
                 </div>
             </div>
-
+            
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="text" name="rating" placeholder="ESRB (or expected) Rating">
+                    <input class="input is-large" type="rating" name="rating" placeholder="ESRB (or expected) Rating">
                 </div>
             </div>
-
+            
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="url" name="screenshots_url" placeholder="Screenshots URL">
+                    <input class="input is-large" type="screenshots_url" name="screenshots_url" placeholder="Screenshots URL">
                 </div>
             </div>
-
+            
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="text" name="URL" placeholder="Download URL or Package Name">
+                    <input class="input is-large" type="url" name="URL" placeholder="Download URL or Package Name">
                 </div>
             </div>
-
+            
             <div class="field">
                 <label class="checkbox">
-                    <input type="checkbox" name="in_pack_man">
+                    <input type="checkbox">
                     Is in Package Manager
                 </label>
             </div>
-
+            
             <button class="button is-block is-info is-large is-fullwidth">Add Game</button>
         </form>
     </div>
