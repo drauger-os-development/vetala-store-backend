@@ -1,7 +1,7 @@
 {
   "0": {
     "Name": "Minetest",
-    "compile_type": "linux",
+    "platform": "linux",
     "description": "Open-source Minecraft Clone that runs natively on Windows, MacOS, Linux, and other OSs",
     "downloads": 1,
     "genres": [
@@ -21,7 +21,7 @@
   },
   "1": {
     "Name": "Xonotic",
-    "compile_type": "linux",
+    "platform": "linux",
     "description": "Xonotic is an addictive, arena-style first person shooter with crisp movement and a wide array of weapons. It combines intuitive mechanics with in-your-face action to elevate your heart rate",
     "downloads": 1,
     "genres": [
@@ -39,7 +39,7 @@
 },
   "2": {
       "Name": "0_A.D.",
-      "compile_type": "linux",
+      "platform": "linux",
       "description": "0 A.D. (pronounced “zero-ey-dee”) is a free, open-source, historical Real Time Strategy (RTS) game currently under development by Wildfire Games, a global group of volunteer game developers. As the leader of an ancient civilization, you must gather the resources you need to raise a military force and dominate your enemies.",
       "downloads": 1,
       "genres": [
@@ -57,7 +57,7 @@
   },
   "3": {
       "Name": "Adagate",
-      "compile_type": "linux",
+      "platform": "linux",
       "description": "AdaGate is a 3D sokoban puzzle game within a Stargate / Portal fantasy setting. It is an elaborate example of modern OpenGL programming using the Ada language that runs on Windows, OSX, and GNU/Linux.",
       "downloads": 1,
       "genres": [
@@ -74,7 +74,7 @@
   },
   "4": {
       "Name": "Freeciv",
-      "compile_type": "linux",
+      "platform": "linux",
       "description": "Freeciv is a Free and Open Source empire-building strategy game inspired by the history of human civilization.",
       "downloads": 1,
       "genres": [
@@ -93,7 +93,7 @@
   },
   "5": {
       "Name": "AstroMenace",
-      "compile_type": "linux",
+      "platform": "linux",
       "description": "AstroMenace stands out for a hardcore gameplay that absorbs you completely as you repel the relentless attacks of diverse adversaries and dodge hails of projectiles. During the game, you will face many cunning opponents, having unique tactics and strategies and trying to give you a rough time in their own peculiar way, so you’ll need all your quick-wits to evade their attacks.",
       "downloads": 1,
       "genres": [
@@ -110,7 +110,7 @@
   },
   "6": {
       "Name": "Battle_for_Wesnoth",
-      "compile_type": "linux",
+      "platform": "linux",
       "description": "The Battle for Wesnoth is a turn-based tactical strategy game with a high fantasy theme. Build up a great army, gradually turning raw recruits into hardened veterans. In later games, recall your toughest warriors and form a deadly host that none can stand against! Choose units from a large pool of specialists, and hand-pick a force with the right strengths to fight well on different terrains against all manner of opposition.",
       "downloads": 1,
       "genres": [
@@ -127,7 +127,7 @@
   },
   "7": {
       "Name": "SuperTuxKart",
-      "compile_type": "linux",
+      "platform": "linux",
       "description": "SuperTuxKart is a free 3D kart racing game. It has been compared to games like Mario Kart from Nintendo, but it has a completely original engine, art and audio.",
       "downloads": 1,
       "genres": [
