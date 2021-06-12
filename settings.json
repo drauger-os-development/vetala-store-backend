@@ -1,6 +1,6 @@
 {
     "db_name": "testdb.sql",
     "store_name": "Vetala Store",
-    "login_path": "/admin",
+    "login_path": "admin",
     "secrets_file": "auth.json"
 }
