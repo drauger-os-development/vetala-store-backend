@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="column is-4 is-offset-4">
+    <h3 class="title">Remove A Game</h3>
+    <div class="box">
+    	<form method="POST" action="/remove_game">
+    	    <label for="search">Search For Games:</label>
+    	    <input type="search" id="search" name="search">
+    	    </br>
+    	    </br>
+            <button class="button is-block is-info is-large is-fullwidth" name="search">Search</button>
+    	</form>
+        <form method="POST" action="/remove_game">
+            <!-- PLACE PARSED IN DATA HERE -->
+            <!-- ### -->
+            <!-- END PARSED IN DATA -->
+            </br>
+            <button class="button is-block is-info is-large is-fullwidth" name="remove_games">Remove Games</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

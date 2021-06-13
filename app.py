@@ -194,7 +194,7 @@ def download_game(name):
 
 # Searching for games
 @app.route("/search/<term>")
-def search(term):
+def search(term, internal=False):
     db = sql.connect(settings["db_name"])
     if term[:4] == "tags":
         tags = term[5:].split(",")
@@ -218,7 +218,8 @@ def search(term):
                 length+=1
     for each in return_data:
         del return_data[each]["URL"]
-        del return_data[each]["base64"]
+        if not internal:
+            del return_data[each]["base64"]
         del return_data[each]["in_pack_man"]
     db.close()
     return return_data
@@ -265,7 +266,7 @@ def login_post():
         return redirect(url_for("login"))
 
     login_user(users[username], remember=remember)
-    return redirect(url_for('add_game'))
+    return redirect(url_for('interface_ag'))
 
 
 @app.route("/logout")
@@ -276,8 +277,8 @@ def logout():
 
 @app.route("/add_game")
 @login_required
-def interface():
-    return render_template("interface.html")
+def interface_ag():
+    return render_template("add_game.html")
 
 @app.route("/add_game", methods=["POST"])
 @login_required
@@ -286,8 +287,12 @@ def add_game():
     # We can get everything except the base64, time, and downloads from the form
     # The remaining 2 (base64 and time) we have to get ourselves
     # Downloads can be assumed to be 1
-    add = """VALUES ("%s", "%s", %s, "%s", "%s", "%s", "%s", "%s", "%s", %s, %s)""" % (request.form.get("name"),
-                                                                                       base64.encodestring(request.form.get("URL").encode()).decode(),
+    base64_val = base64.encodestring(request.form.get("URL").encode()).decode()
+    base64_val = base64_val.strip("\r")
+    base64_val = base64_val.strip("\n")
+    name = request.form.get("name").replace(" ", "_")
+    add = """VALUES ("%s", "%s", %s, "%s", "%s", "%s", "%s", "%s", "%s", %s, %s)""" % (name,
+                                                                                       base64_val,
                                                                                        1, request.form.get("genres"),
                                                                                        request.form.get("URL"),
                                                                                        request.form.get("screenshots_url"),
@@ -300,6 +305,82 @@ def add_game():
     db.execute(command)
     db.commit()
     db.close()
-    return redirect(url_for('interface'))
+    temp = render_template("add_game.html")
+    place_holder = "<!-- ### -->"
+    added = "</br>" + name.replace("_", " ") + " Successfully Added!</br>"
+    temp = temp.replace(place_holder, added)
+    return temp
 
 @app.route("/remove_game")
+@login_required
+def interface_rg():
+    temp = render_template("remove_game.html")
+    place_holder = "<!-- ### -->"
+    base64_vals = """<input type="hidden" id="base64_vals" name="base64_vals" value="">"""
+    temp = temp.replace(place_holder, base64_vals)
+    return temp
+
+
+@app.route("/remove_game", methods=["POST"])
+@login_required
+def rg_post_toggle():
+    remove_games_button = request.form.get("remove_games")
+    search_button = request.form.get("search")
+    if search_button is not None:
+        return get_games_rg(search_button)
+    base64_vals = request.form.get("base64_vals").split(",")
+    for each in base64_vals:
+        each = each.strip("\r")
+        each = each.strip("\n")
+    return remove_games(base64_vals, request.form)
+
+
+def get_games_rg(orig_search_term):
+    if orig_search_term[0] == "$":
+        search_term = "tags=" + orig_search_term[1:]
+    else:
+        search_term = "free-text=" + orig_search_term
+    search_results = search(search_term, internal=True)
+    temp = render_template("remove_game.html")
+    place_holder = "<!-- ### -->"
+    output = []
+    base64_output = []
+    # We have our search terms. We have our template. Now we need to generate the
+    # data to parse into the template
+    for each in search_results:
+        check_box = """
+            <div class="field">
+                <label class="checkbox">
+                    <input type="checkbox" name="%s">
+                    <!-- ### -->
+                </label>
+            </div>
+""" % (search_results[each]["base64"])
+        check_box = check_box.replace(place_holder, search_results[each]["Name"].replace("_", " "))
+        # Make sure replacing it later doesn't overwrite the copied value
+        output.append(copy.deepcopy(check_box))
+        base64_output.append(search_results[each]["base64"])
+    base64_vals = """<input type="hidden" id="base64_vals" name="base64_vals" value="%s">""" % (",".join(base64_output))
+    prev_search_term = """<input type="hidden" id="prev_search_term" name="prev_search_term" value="%s">""" % (orig_search_term)
+    output = "</br>".join(output)
+    output = base64_vals + prev_search_term + "</br>" + output
+    temp = temp.replace(place_holder, output)
+    return temp
+
+def remove_games(base64_vals, form):
+    db = sql.connect(settings["db_name"])
+    deleted = []
+    delete_command = """DELETE FROM games WHERE base64=\""""
+    select_command = """SELECT * FROM games WHERE base64=\""""
+    place_holder = "<!-- ### -->"
+    temp = render_template("remove_game.html")
+    for each in base64_vals:
+        if form.get(each) == "on":
+            data = format_data(db.execute(select_command + each + "\"").fetchall())[0]
+            print(data)
+            deleted.append(data["Name"].replace("_", " "))
+            db.execute(delete_command + each + "\"")
+    db.commit()
+    deleted = "</br>" + ", ".join(deleted) + " Successfully Deleted!</br>"
+    temp = temp.replace(place_holder, deleted)
+    return temp

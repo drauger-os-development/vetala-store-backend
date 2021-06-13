@@ -18,15 +18,26 @@
 
                     <div id="navbarMenuHeroA" class="navbar-menu">
                         <div class="navbar-end">
-                            <a href="{{ url_for('interface') }}" class="navbar-item">
-                                Interface
-                            </a>
-                            <a href="{{ url_for('login') }}" class="navbar-item">
-                                Login
-                            </a>
-                            <a href="{{ url_for('logout') }}" class="navbar-item">
-                                Logout
-                            </a>
+    				{% if not current_user.is_authenticated %}
+				<a href="{{ url_for('login') }}" class="navbar-item">
+        				Login
+    				</a>
+    				{% endif %}
+    				{% if current_user.is_authenticated %}
+    				<a href="{{ url_for('logout') }}" class="navbar-item">
+        				Logout
+    				</a>
+    				{% endif %}
+    				{% if current_user.is_authenticated %}
+    				<a href="{{ url_for('interface_ag') }}" class="navbar-item">
+        				Add Game
+    				</a>
+    				{% endif %}
+    				{% if current_user.is_authenticated %}
+    				<a href="{{ url_for('interface_rg') }}" class="navbar-item">
+        				Remove Game
+    				</a>
+    				{% endif %}
                         </div>
                     </div>
                 </div>
