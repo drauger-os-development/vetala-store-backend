@@ -384,3 +384,7 @@ def remove_games(base64_vals, form):
     deleted = "</br>" + ", ".join(deleted) + " Successfully Deleted!</br>"
     temp = temp.replace(place_holder, deleted)
     return temp
+
+
+if __name__ == "__main__":
+    app.run()
