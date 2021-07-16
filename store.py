@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-#  app.py
+#  store.py
 #
 #  Copyright 2021 Thomas Castleman <contact@draugeros.org>
 #
