@@ -136,6 +136,7 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
+
 @login_manager.user_loader
 def load_user(username):
     # since the user_id is just the primary key of our user table, use it in the query for the user
@@ -165,7 +166,6 @@ def game_front_page():
     return data
 
 
-
 # Looking at an individual game
 @app.route("/games/<name>")
 def view_game(name):
@@ -191,6 +191,7 @@ def download_game(name):
     db.commit()
     db.close()
     return {"URL": return_data[0]["URL"], "in_pack_man": return_data[0]["in_pack_man"]}
+
 
 # Searching for games
 @app.route("/search/<term>")
@@ -266,7 +267,7 @@ def login_post():
         return redirect(url_for("login"))
 
     login_user(users[username], remember=remember)
-    return redirect(url_for('interface_ag'))
+    return redirect(url_for('home'))
 
 
 @app.route("/logout")
@@ -275,10 +276,12 @@ def logout():
     logout_user()
     return redirect(url_for("login"))
 
+
 @app.route("/add_game")
 @login_required
 def interface_ag():
     return render_template("add_game.html")
+
 
 @app.route("/add_game", methods=["POST"])
 @login_required
@@ -311,6 +314,7 @@ def add_game():
     temp = temp.replace(place_holder, added)
     return temp
 
+
 @app.route("/remove_game")
 @login_required
 def interface_rg():
@@ -333,6 +337,13 @@ def rg_post_toggle():
         each = each.strip("\r")
         each = each.strip("\n")
     return remove_games(base64_vals, request.form)
+
+
+@app.route("/home")
+@login_required
+def home():
+    print(dir(current_user))
+    return render_template("home.html", username=current_user.username)
 
 
 def get_games_rg(orig_search_term):
@@ -366,6 +377,7 @@ def get_games_rg(orig_search_term):
     output = base64_vals + prev_search_term + "</br>" + output
     temp = temp.replace(place_holder, output)
     return temp
+
 
 def remove_games(base64_vals, form):
     db = sql.connect(settings["db_name"])

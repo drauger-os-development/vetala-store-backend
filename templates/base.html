@@ -29,6 +29,11 @@
     				</a>
     				{% endif %}
     				{% if current_user.is_authenticated %}
+    				<a href="{{ url_for('home') }}" class="navbar-item">
+        				Home
+    				</a>
+    				{% endif %}
+    				{% if current_user.is_authenticated %}
     				<a href="{{ url_for('interface_ag') }}" class="navbar-item">
         				Add Game
     				</a>
