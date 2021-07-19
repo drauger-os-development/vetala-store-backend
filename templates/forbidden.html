@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="column is-4 is-offset-4">
+    <h3 class="title">Welcome, {{ username }}!</h3>
+    <div class="box">
+    	We're sorry, but you don't have permission to use that feature.
+        <form method="GET" action="/remove_game">
+            <button class="button is-block is-info is-large is-fullwidth" name="remove_games">Remove Games</button>
+        </form>
+        </br>
+        <form method="GET" action="/add_game">
+            <button class="button is-block is-info is-large is-fullwidth" name="add_games">Add Games</button>
+        </form>
+        </br>
+        <form method="GET" action="/add_account">
+            <button class="button is-block is-info is-large is-fullwidth" name="add_acount">Add Account</button>
+        </form>
+        </br>
+        <form method="GET" action="/remove_account">
+            <button class="button is-block is-info is-large is-fullwidth" name="remove_acount">Remove Account</button>
+        </form>
+        </br>
+        <form method="GET" action="/edit_account">
+            <button class="button is-block is-info is-large is-fullwidth" name="edit_acount">Edit Your Account</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

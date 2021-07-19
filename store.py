@@ -478,6 +478,9 @@ def serve_remove_account(errors=""):
     """Serve remove account"""
     with open(settings["secrets_file"], "r") as file:
         secrets = json.load(file)
+    username = current_user.username
+    if secrets[username]["removable"]:
+        return render_template("forbidden.html", username=username)
     place_holder = "<!-- ### -->"
     error = ""
     if errors == "missing_account":
