@@ -53,6 +53,11 @@
         				Remove Account
     				</a>
     				{% endif %}
+    				{% if current_user.is_authenticated %}
+    				<a href="{{ url_for('edit_account') }}" class="navbar-item">
+        				Edit Your Account
+    				</a>
+    				{% endif %}
                         </div>
                     </div>
                 </div>

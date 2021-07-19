@@ -512,5 +512,66 @@ def remove_account():
     return serve_remove_account(errors="account_removed")
 
 
+@app.route("/edit_account")
+@login_required
+def serve_edit_account(errors=""):
+    """Edit your account"""
+    with open(settings["secrets_file"], "r") as file:
+        secrets = json.load(file)
+    place_holder = "<!-- ### -->"
+    error = ""
+    if errors == "edit_success":
+        error = "Account Change Successfull!"
+    elif errors == "mismatch_password":
+        error = "Passwords do not match!"
+    elif errors == "unknown_password":
+        error = "In order to change hashing settings, you must reset or change your password."
+    username = current_user.username
+    hash_count = secrets[username]["rehash_count"]
+    temp = render_template("edit_account.html", error=error, username=username,
+                           hash_number=hash_count)
+    radio_button = """
+    <input type="radio" id="%s" name="hash_algo" value="%s">
+    <label for="%s">%s</label><br>
+    """
+    output = []
+    for each in hash.algorithms_guaranteed:
+        output.append(radio_button % (each, each, each, each))
+    output = "</br>".join(output)
+    temp = temp.replace(place_holder, output)
+    return temp
+
+
+@app.route("/edit_account", methods=["POST"])
+@login_required
+def edit_account(errors=""):
+    """Edit account"""
+    with open(settings["secrets_file"], "r") as file:
+        secrets = json.load(file)
+    username = current_user.username
+    password = request.form.get("password")
+    password_check = request.form.get("password_check")
+    hash_algo = request.form.get("hash_algo")
+    hash_number = int(request.form.get("hash_number"))
+    if password != password_check:
+        return serve_edit_account(errors="mismatch_password")
+    if ((hash_algo != secrets[username]["hash_algo"]) and ("" in (password, password_check))):
+        return serve_edit_account(errors="unknown_password")
+    if ((hash_number != secrets[username]["rehash_count"]) and ("" in (password, password_check))):
+        return serve_edit_account(errors="unknown_password")
+    del password_check
+    gen_hash = password
+    hash_func = getattr(hash, hash_algo)
+    for each in range(hash_number):
+        gen_hash = hash_func(gen_hash.encode()).hexdigest()
+    secrets[username]["password_hash"] = gen_hash
+    secrets[username]["rehash_count"] = hash_number
+    secrets[username]["hash_algo"] = hash_algo
+    with open(settings["secrets_file"], "w") as file:
+        json.dump(secrets, file, indent=2)
+    del secrets, hash_func, gen_hash, password, username, hash_algo, hash_number
+    return serve_edit_account(errors="edit_success")
+
+
 if __name__ == "__main__":
     app.run()
