@@ -408,6 +408,9 @@ def remove_games(base64_vals, form):
 @app.route("/add_account")
 @login_required
 def serve_add_account(errors=""):
+    with open(settings["secrets_file"], "r") as file:
+        secrets = json.load(file)
+    username = current_user.username
     place_holder = "<!-- ### -->"
     error = ""
     if errors == "mismatch_password":
@@ -418,12 +421,16 @@ def serve_add_account(errors=""):
         error = "Account Created Successfully!"
     temp = render_template("create_account.html", error=error)
     radio_button = """
-    <input type="radio" id="%s" name="hash_algo" value="%s">
+    <input type="radio" id="%s" name="hash_algo" value="%s" %s>
     <label for="%s">%s</label><br>
     """
     output = []
     for each in hash.algorithms_guaranteed:
-        output.append(radio_button % (each, each, each, each))
+        if "shake" not in each:
+            if each == secrets[username]["hash_algo"]:
+                output.append(radio_button % (each, each, "checked", each, each))
+            else:
+                output.append(radio_button % (each, each, "", each, each))
     output = "</br>".join(output)
     temp = temp.replace(place_holder, output)
     return temp
@@ -531,12 +538,16 @@ def serve_edit_account(errors=""):
     temp = render_template("edit_account.html", error=error, username=username,
                            hash_number=hash_count)
     radio_button = """
-    <input type="radio" id="%s" name="hash_algo" value="%s">
+    <input type="radio" id="%s" name="hash_algo" value="%s" %s>
     <label for="%s">%s</label><br>
     """
     output = []
     for each in hash.algorithms_guaranteed:
-        output.append(radio_button % (each, each, each, each))
+        if "shake" not in each:
+            if each == secrets[username]["hash_algo"]:
+                output.append(radio_button % (each, each, "checked", each, each))
+            else:
+                output.append(radio_button % (each, each, "", each, each))
     output = "</br>".join(output)
     temp = temp.replace(place_holder, output)
     return temp
