@@ -93,7 +93,7 @@ db = sql.connect(settings["db_name"])
 tables = db.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()
 if len(tables) < 1:
     db.execute("""CREATE TABLE games
-    (name TEXT, base64 BLOB, downloads INTEGER, genres TEXT, url BLOB,
+    (name TEXT, submitter TEXT, base64 BLOB, downloads INTEGER, genres TEXT, url BLOB,
     screenshots_url BLOB, description TEXT, rating TEXT, platform TEXT,
     add_time INTEGER, in_pack_man BOOLEAN)""")
     if os.path.isfile("default_games.json"):
@@ -101,8 +101,9 @@ if len(tables) < 1:
             default_games = json.load(file)
         for each in default_games:
             db.execute("""INSERT INTO games VALUES
-("%s", "%s", %s, "%s", "%s", "%s", "%s",
+("%s", "%s", "%s", %s, "%s", "%s", "%s", "%s",
 "%s", "%s", %s, %s)""" % (default_games[each]["Name"],
+                          default_games[each]["submitter"],
                           default_games[each]["base64"],
                           default_games[each]["downloads"],
                           ",".join(default_games[each]["genres"]),
@@ -128,11 +129,13 @@ def format_data(to_format):
     return_data = {}
     length = 0
     for data in to_format:
-        add = {"Name": data[0], "base64": data[1], "downloads": data[2],
-               "genres": data[3].split(","), "URL": data[4],
-               "screenshots_url": data[5], "description": data[6],
-               "rating": data[7].upper(), "platform": data[8].lower(),
-               "joined": data[9], "in_pack_man": data[10]}
+
+        add = {"Name": data[0], "submitter": data[1], "base64": data[2],
+               "downloads": data[3], "genres": data[4].split(","),
+               "URL": data[5], "screenshots_url": data[6],
+               "description": data[7], "rating": data[8].upper(),
+               "platform": data[9].lower(), "joined": data[10],
+               "in_pack_man": data[11]}
         return_data[length] = copy.deepcopy(add)
         length+=1
     return return_data
@@ -168,6 +171,7 @@ def game_front_page():
         del data[each]["URL"]
         del data[each]["base64"]
         del data[each]["in_pack_man"]
+        del data[each]["submitter"]
     db.close()
     return data
 
@@ -183,6 +187,7 @@ def view_game(name):
     del data[0]["URL"]
     del data[0]["base64"]
     del data[0]["in_pack_man"]
+    del data[0]["submitter"]
     db.close()
     return data[0]
 
@@ -223,10 +228,13 @@ def search(term, internal=False):
             if ((text.lower() in data[game]["Name"].lower()) or (text.lower() in data[game]["description"].lower())):
                 return_data[length] = data[game]
                 length+=1
+    else:
+        return {"Error": "Not a valid search type. Valid types are 'tags' and 'free-text'."}
     for each in return_data:
         del return_data[each]["URL"]
         if not internal:
             del return_data[each]["base64"]
+            del return_data[each]["submitter"]
         del return_data[each]["in_pack_man"]
     db.close()
     return return_data
@@ -302,7 +310,8 @@ def add_game():
     base64_val = base64_val.strip("\r")
     base64_val = base64_val.strip("\n")
     name = request.form.get("name").replace(" ", "_")
-    add = """VALUES ("%s", "%s", %s, "%s", "%s", "%s", "%s", "%s", "%s", %s, %s)""" % (name,
+    add = """VALUES ("%s", "%s", "%s", %s, "%s", "%s", "%s", "%s", "%s", "%s", %s, %s)""" % (name,
+                                                                                       current_user.username,
                                                                                        base64_val,
                                                                                        1, request.form.get("genres"),
                                                                                        request.form.get("URL"),
@@ -312,7 +321,7 @@ def add_game():
                                                                                        request.form.get("platform").lower(),
                                                                                        time.time(),
                                                                                        True if request.form.get('in_pack_man') else False)
-    command = """INSERT INTO games (name, base64, downloads, genres, url, screenshots_url, description, rating, platform, add_time, in_pack_man) %s """ % (add)
+    command = """INSERT INTO games (name, submitter, base64, downloads, genres, url, screenshots_url, description, rating, platform, add_time, in_pack_man) %s """ % (add)
     db.execute(command)
     db.commit()
     db.close()
@@ -354,11 +363,27 @@ def home():
 
 
 def get_games_rg(orig_search_term):
+    with open(settings["secrets_file"], "r") as file:
+        secrets = json.load(file)
+    user = current_user.username
+    limited = False
+    if secrets[user]["removable"]:
+        limited = True
+    del secrets
     if orig_search_term[0] == "$":
         search_term = "tags=" + orig_search_term[1:]
     else:
         search_term = "free-text=" + orig_search_term
     search_results = search(search_term, internal=True)
+    if limited:
+        print("LIMITED USER ACCESSING: %s" % (user))
+        working = {}
+        count = 0
+        for each in search_results:
+            if search_results[each]["submitter"] == user:
+                working[count] = search_results[each]
+                count += 1
+        search_results = working
     temp = render_template("remove_game.html")
     place_holder = "<!-- ### -->"
     output = []
