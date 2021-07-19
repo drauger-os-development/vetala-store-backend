@@ -77,10 +77,16 @@ class User(UserMixin):
         return self.username
 
 
-users = {}
-for each in secrets:
-    if isinstance(secrets[each], dict):
-        users[each] = User(each, secrets[each]["password_hash"])
+def get_users():
+    """Get list of all users"""
+    with open(settings["secrets_file"], "r") as file:
+        secrets = json.load(file)
+    users = {}
+    for each in secrets:
+        if isinstance(secrets[each], dict):
+            users[each] = User(each, secrets[each]["password_hash"])
+    return users
+
 
 # Initialize the DB
 db = sql.connect(settings["db_name"])
@@ -114,8 +120,8 @@ db.close()
 # Generate a random, alpha numeric key. With optional salting.
 key = gen_rand_string(length=secrets["secret_key_len"]) + secrets["salt"]
 app.config["SECRET_KEY"] = hash.sha512(key.encode()).hexdigest()
-# For security purposes, delete the pre-hashed version of the key
-del key
+# For security purposes, delete the pre-hashed version of the key and the secrets data struct
+del key, secrets
 
 
 def format_data(to_format):
@@ -140,7 +146,7 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(username):
     # since the user_id is just the primary key of our user table, use it in the query for the user
-    return users[username]
+    return get_users()[username]
 
 
 @app.route("/")
@@ -249,6 +255,8 @@ def login():
 
 @app.route('/login', methods=['POST'])
 def login_post():
+    with open(settings["secrets_file"], "r") as file:
+        secrets = json.load(file)
     username = request.form.get("username")
     gen_hash = request.form.get("password")
     remember = True if request.form.get('remember') else False
@@ -266,7 +274,7 @@ def login_post():
         flash('Please check your login details and try again.')
         return redirect(url_for("login"))
 
-    login_user(users[username], remember=remember)
+    login_user(get_users()[username], remember=remember)
     return redirect(url_for('home'))
 
 
@@ -342,7 +350,6 @@ def rg_post_toggle():
 @app.route("/home")
 @login_required
 def home():
-    print(dir(current_user))
     return render_template("home.html", username=current_user.username)
 
 
@@ -396,6 +403,113 @@ def remove_games(base64_vals, form):
     deleted = "</br>" + ", ".join(deleted) + " Successfully Deleted!</br>"
     temp = temp.replace(place_holder, deleted)
     return temp
+
+
+@app.route("/add_account")
+@login_required
+def serve_add_account(errors=""):
+    place_holder = "<!-- ### -->"
+    error = ""
+    if errors == "mismatch_password":
+        error = "Passwords do not match!"
+    elif errors == "username_taken":
+        error = "That username is taken!"
+    elif errors == "account_created":
+        error = "Account Created Successfully!"
+    temp = render_template("create_account.html", error=error)
+    radio_button = """
+    <input type="radio" id="%s" name="hash_algo" value="%s">
+    <label for="%s">%s</label><br>
+    """
+    output = []
+    for each in hash.algorithms_guaranteed:
+        output.append(radio_button % (each, each, each, each))
+    output = "</br>".join(output)
+    temp = temp.replace(place_holder, output)
+    return temp
+
+
+@app.route("/add_account", methods=["POST"])
+@login_required
+def add_account():
+    # Load a local copy of the auth file
+    with open(settings["secrets_file"], "r") as file:
+        secrets = json.load(file)
+    username = request.form.get("username")
+    password = request.form.get("password")
+    password_check = request.form.get("password_check")
+    hash_algo = request.form.get("hash_algo")
+    hash_number = int(request.form.get("hash_number"))
+    removable = request.form.get("removable")
+    if removable == "on":
+        removable = True
+    else:
+        removable = False
+    # Check password
+    if password != password_check:
+        return serve_add_account(errors="mismatch_password")
+    # Check username
+    del password_check
+    if username in secrets:
+        return serve_add_account(errors="username_taken")
+    gen_hash = password
+    hash_func = getattr(hash, hash_algo)
+    for each in range(hash_number):
+        gen_hash = hash_func(gen_hash.encode()).hexdigest()
+    secrets[username] = {"password_hash": gen_hash, "hash_algo": hash_algo,
+                         "rehash_count": hash_number, "removable": removable}
+    with open(settings["secrets_file"], "w") as file:
+        json.dump(secrets, file, indent=2)
+    # Delete everything we had in memory to make it harder to access in compromised situations
+    del secrets, hash_func, gen_hash, password, username, hash_algo, hash_number
+    return serve_add_account(errors="account_created")
+
+
+@app.route("/remove_account")
+@login_required
+def serve_remove_account(errors=""):
+    """Serve remove account"""
+    with open(settings["secrets_file"], "r") as file:
+        secrets = json.load(file)
+    place_holder = "<!-- ### -->"
+    error = ""
+    if errors == "missing_account":
+        error = "Account Not Found!"
+    elif errors == "account_removed":
+        error = "Account Removed Successfully!"
+    temp = render_template("remove_account.html", error=error)
+    radio_button = """
+    <input type="radio" id="%s" name="remove" value="%s">
+    <label for="%s">%s</label><br>
+    """
+    output = []
+    workable = {}
+    for each in secrets:
+        if isinstance(secrets[each], dict):
+            workable[each] = secrets[each]
+    for each in workable:
+        if workable[each]["removable"]:
+            output.append(radio_button % (each, each, each, each))
+    if output == []:
+        output.append("No removable accounts found")
+    output = "</br>".join(output)
+    temp = temp.replace(place_holder, output)
+    return temp
+
+
+@app.route("/remove_account", methods=["POST"])
+@login_required
+def remove_account():
+    """Remove accounts"""
+    account = request.form.get("remove")
+    with open(settings["secrets_file"], "r") as file:
+        secrets = json.load(file)
+    if account not in secrets:
+        return serve_remove_account(error="missing_account")
+    del secrets[account]
+    with open(settings["secrets_file"], "w") as file:
+        json.dump(secrets, file, indent=2)
+    return serve_remove_account(errors="account_removed")
 
 
 if __name__ == "__main__":

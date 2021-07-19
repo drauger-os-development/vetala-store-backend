@@ -43,6 +43,16 @@
         				Remove Game
     				</a>
     				{% endif %}
+    				{% if current_user.is_authenticated %}
+    				<a href="{{ url_for('add_account') }}" class="navbar-item">
+        				Add Account
+    				</a>
+    				{% endif %}
+    				{% if current_user.is_authenticated %}
+    				<a href="{{ url_for('remove_account') }}" class="navbar-item">
+        				Remove Account
+    				</a>
+    				{% endif %}
                         </div>
                     </div>
                 </div>

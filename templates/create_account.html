@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="column is-4 is-offset-4">
+    <h3 class="title">Create Account for New Administrator</h3>
+    <div class="box">
+        {{ error }}
+        <form method="POST" action="/add_account">
+        	<div class="field">
+                <div class="control">
+  					<input class="input is-large" type="text" id="username" name="username" required placeholder="Username">
+  				</div>
+            </div>
+            
+  			<div class="field">
+                <div class="control">
+  					<input class="input is-large" type="password" id="password" name="password" required placeholder="Password">
+  				</div>
+            </div>
+            
+  			<div class="field">
+                <div class="control">
+  					<input class="input is-large" type="password" id="password_check" name="password_check" required placeholder="Confirm Password">
+  				</div>
+            </div>
+            
+        	<div class="field">
+                <div class="control">
+        			<!-- PLACE PARSED IN DATA HERE -->
+            		<!-- ### -->
+            		<!-- END PARSED IN DATA -->
+        		</div>
+            </div>
+            
+        	<div class="field">
+                <div class="control">
+  					<label for="hash_number">Number of times to hash(Max 100):</label>
+  					<input class="input is-large" type="number" id="hash_number" name="hash_number" min="1" max="100" step="1" value="5" required>
+  				</div>
+            </div>
+            
+            <div class="field">
+                <div class="control">
+                	<label for="hash_number">Removable:</label>
+  					<input type="checkbox" id="removable" name="removable">
+  				</div>
+            </div>
+            
+  			<div class="field">
+                <div class="control">
+        			<button class="button is-block is-info is-large is-fullwidth">Add Account</button>
+        		</div>
+            </div>
+            
+        </form>
+    </div>
+</div>
+{% endblock %}
