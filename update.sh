@@ -1,8 +1,7 @@
 #!/bin/bash
-
 # -*- coding: utf-8 -*-
 #
-#  uninstall.sh
+#  update.sh
 #
 #  Copyright 2021 Thomas Castleman <contact@draugeros.org>
 #
@@ -22,15 +21,28 @@
 #  MA 02110-1301, USA.
 #
 #
-echo "Removing files and disabling. . ."
-# Stop and disable start up service
-sudo systemctl stop store_backend
-sudo systemctl disable store_backend
-# remove system files
-sudo rm -fv /etc/nginx/sites-available/store_backend.conf /etc/nginx/sites-enabled/store_backend.conf /etc/systemd/system/store_backend.service
-# restart nginx to take the site offline
-sudo systemctl restart nginx
-# remove commit tag
+set -Ee
+set -o pipefail
+echo "Pulling updates . . ."
+git pull
+# Check to see if there are any updates
 if [ -f .git_commit_number ]; then
-    rm .git_commit_number
+	num_git=$(git log | grep "^commit " | head -n1 | awk '{print $2}')
+	num_file=$(<.git_commit_number)
+	if [ "$num_git" == "$num_file" ]; then
+		# no updates. Exit.
+		exit
+	fi
 fi
+# We need to figure out what port was configured beforehand so that the user's settings are retained
+port=$(grep "listen *.*;" /etc/nginx/sites-available/store_backend.conf | awk '{print $2}' | sed 's/;//g')
+
+# uninstall download_optimizer
+echo "Deconfiguring . . ."
+./uninstall.sh
+
+# reinstall download_optimizer
+echo "Reconfiguring . . ."
+./setup.sh "$port"
+
+echo "Update complete!"
